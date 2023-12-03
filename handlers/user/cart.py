@@ -349,6 +349,6 @@ async def process_confirm(message: Message, state: FSMContext):
             f"Товари:  <b>{', '.join(all_products)}</b>\n"
             f"Сума замовлення:  <b>{products_sum}</b> ₴"
         )
-        await bot.send_message(chat_id=5791823682, text=text, parse_mode="HTML")
+        await bot.send_message(chat_id=6128561399, text=text, parse_mode="HTML")
 
     await state.finish()
