@@ -8,7 +8,7 @@ from filters import IsAdmin, IsUser
 import asyncio
 
 catalog = '🛍️ Магазин'
-cart = '🛒 Корзина'
+cart = '🛒 Кошик'
 sale = '🎁 Акція'
 contacts = '📞Контакти'
 
@@ -37,7 +37,7 @@ async def user_menu(message: Message):
     markup.add(sale).insert(contacts)
     await message.answer('Ознайомтеся з 🎁 Акцією,'
                          '\nоберіть букет в 🛍️ Магазині'
-                         '\nта оформіть покупку в 🛒 Корзині.', reply_markup=markup)
+                         '\nта оформіть покупку в 🛒 Кошику.', reply_markup=markup)
 
 
 @dp.message_handler(IsUser(), text=contacts)
