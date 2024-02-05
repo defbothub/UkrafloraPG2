@@ -24,7 +24,7 @@ async def process_cart(message: Message, state: FSMContext):
         tg_uid=message.chat.id).filter(Orders.is_orderd == False).first()
     if order == None:
         ordered_products = []
-        await message.answer('Ваша корзина ще порожня.\nТисніть 🛍️ Магазин, щоб обрати товар 👇',
+        await message.answer('Ваш кошик ще порожній.\nТисніть 🛍️ Магазин, щоб обрати товар 👇',
                              reply_markup=markup_user)
     else:
         # Вытаскиваем все заказанные продукты по оредру
@@ -151,10 +151,10 @@ async def clear_cart(message: Message):
         db.db_session.query(Ordered_products).filter_by(order_id=order.id).delete()
         db.db_session.delete(order)
         db.db_session.commit()
-        await message.answer("Корзина очищена.\nТисніть 🛍️ Магазин, щоб продовжити покупки 👇",
+        await message.answer("Кошик очищений.\nТисніть 🛍️ Магазин, щоб продовжити покупки 👇",
                              reply_markup=markup_user)
     else:
-        await message.answer("Ваша корзина вже порожня.\nТисніть 🛍️ Магазин, щоб обрати товар 👇",
+        await message.answer("Ваш кошик вже порожній.\nТисніть 🛍️ Магазин, щоб обрати товар 👇",
                              reply_markup=markup_user)
 
 
