@@ -62,10 +62,10 @@ async def add_product_callback_handler(query: CallbackQuery, callback_data: dict
         db.db_session.add(ordered)
         db.db_session.commit()
 
-        await query.answer('Товар додано в корзину!')
+        await query.answer('Товар додано до кошика!')
         await query.message.delete()
     else:
-        await query.answer('Товар вже в корзині.')
+        await query.answer('Товар вже в кошику.')
         await query.message.delete()
 
 '''При нажатии на НАЗАД '''
