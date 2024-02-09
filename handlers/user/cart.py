@@ -341,16 +341,33 @@ async def process_confirm(message: Message, state: FSMContext):
             all_products.append(str(db_products.title))
             products_sum += int(db_products.price)
 
+        # answer = ''
+        # total_price = 0
+        # 
+        # for product, ordered_product, _ in data['products'].values():
+        #     ordered_product = db.db_session.query(
+        #             Ordered_products).filter_by(id=ordered_product.id).first()
+        #     tp = product.price
+        #     answer += f"<b>{product.title}</b>\n {ordered_product.quantity} шт. по {product.price} ₴\n"
+        #     answer += f'<b>Разом - {tp * ordered_product.quantity} ₴</b>\n'
+        # 
+        #     total_price += tp * ordered_product.quantity
+        # 
+        # await message.answer(f'{answer}\nЗагальна сума: {total_price} ₴',
+        #                      reply_markup=check_markup())
+
         text = (
             "<b>Нове замовлення!</b>\n"
             f"Телефон:  <b>{data['name']}</b>\n"
             f"Ім'я:  <b>{user_name}</b>\n"
             f"Адреса:  <b>{data['address']}</b>\n"
             f"Номер замовлення:  <b>{order_id}</b>\n"
-            f"Товари:  <b>{', '.join(all_products)}</b>\n"
-            f"Сума замовлення:  <b>{products_sum}</b> ₴"
+            #f"Товари:  <b>{', '.join(all_products)}</b>\n"
+            f"Товари:  <b>{', '.join(answer)}</b>\n"
+            f"Сума замовлення:  <b>{total_price}</b> ₴"
         )
-        await bot.send_message(chat_id=6128561399, text=text, parse_mode="HTML")
+        await bot.send_message(chat_id=5791823682, text=text, parse_mode="HTML")
+
         for manager_id in managers:
             try:
                 await bot.send_message(chat_id=manager_id, text=text, parse_mode="HTML")
