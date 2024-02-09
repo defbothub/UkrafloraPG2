@@ -355,20 +355,21 @@ async def process_confirm(message: Message, state: FSMContext):
 
         #await message.answer(f'{answer}\nЗагальна сума: {total_price} ₴', reply_markup=check_markup())
 
-            text = ("<b>Нове замовлення!</b>\n"
-                    f"Телефон:  <b>{data['name']}</b>\n"
-                    f"Ім'я:  <b>{user_name}</b>\n"
-                    f"Адреса:  <b>{data['address']}</b>\n"
-                    f"Номер замовлення:  <b>{order_id}</b>\n"
-                    f"Товари:  <b>{', '.join(all_products)}</b>\n"
-                    f"Сума замовлення:  <b>{total_price}</b> ₴")
-            
-            await bot.send_message(chat_id=952618057, text=text, parse_mode="HTML")
 
-            for manager_id in managers:
-                try:
-                    await bot.send_message(chat_id=manager_id, text=text, parse_mode="HTML")
-                except:
-                    pass
+        text = ("<b>Нове замовлення!</b>\n"
+                f"Телефон:  <b>{data['name']}</b>\n"
+                f"Ім'я:  <b>{user_name}</b>\n"
+                f"Адреса:  <b>{data['address']}</b>\n"
+                f"Номер замовлення:  <b>{order_id}</b>\n"
+                f"Товари:  <b>{', '.join(answer)}</b>\n"
+                f"Сума замовлення:  <b>{total_price}</b> ₴")
+
+        await bot.send_message(chat_id=952618057, text=text, parse_mode="HTML")
+
+        for manager_id in managers:
+            try:
+                await bot.send_message(chat_id=manager_id, text=text, parse_mode="HTML")
+            except:
+                pass
 
     await state.finish()
