@@ -11,6 +11,7 @@ from .menu import cart
 from handlers.user.menu import markup_user
 from utils.db.models import Products, Ordered_products, Orders
 from sqlalchemy.orm import joinedload
+from data.config import managers
 
 '''Показать корзину'''
 
@@ -350,5 +351,10 @@ async def process_confirm(message: Message, state: FSMContext):
             f"Сума замовлення:  <b>{products_sum}</b> ₴"
         )
         await bot.send_message(chat_id=6128561399, text=text, parse_mode="HTML")
+        for manager_id in managers:
+            try:
+                await bot.send_message(chat_id=manager_id, text=text, parse_mode="HTML")
+            except:
+                pass
 
     await state.finish()
