@@ -366,7 +366,7 @@ async def process_confirm(message: Message, state: FSMContext):
             f"Товари:  <b>{', '.join(answer)}</b>\n"
             f"Сума замовлення:  <b>{total_price}</b> ₴"
         )
-        await bot.send_message(chat_id=5791823682, text=text, parse_mode="HTML")
+        await bot.send_message(chat_id=952618057, text=text, parse_mode="HTML")
 
         for manager_id in managers:
             try:
