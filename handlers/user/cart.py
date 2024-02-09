@@ -330,7 +330,20 @@ async def process_confirm(message: Message, state: FSMContext):
         order_id = None
         all_products = []
         products_sum = 0
+  ###      
+        answer = ''
+        total_price = 0
 
+        
+        for product, ordered_product, _ in data['products'].values():
+            ordered_product = db.db_session.query(
+                Ordered_products).filter_by(id=ordered_product.id).first()
+            tp = product.price
+            answer += f"<b>{product.title}</b>\n {ordered_product.quantity} шт. по {product.price} ₴\n"
+            answer += f'<b>Разом - {tp * ordered_product.quantity} ₴</b>\n'
+
+            total_price += tp * ordered_product.quantity
+            
         for i in products:
             i_data = products[i]
             db_products: Products = i_data[0]
@@ -341,21 +354,22 @@ async def process_confirm(message: Message, state: FSMContext):
             all_products.append(str(db_products.title))
             products_sum += int(db_products.price)
 
-
-        text = ("<b>Нове замовлення!</b>\n"
-                f"Телефон:  <b>{data['name']}</b>\n"
-                f"Ім'я:  <b>{user_name}</b>\n"
-                f"Адреса:  <b>{data['address']}</b>\n"
-                f"Номер замовлення:  <b>{order_id}</b>\n"
-                f"Товари:  <b>{', '.join(all_products)}</b>\n"
-                f"Сума замовлення:  <b>{total_price}</b> ₴")
-
+        text = (
+            "<b>Нове замовлення!</b>\n"
+            f"Телефон:  <b>{data['name']}</b>\n"
+            f"Ім'я:  <b>{user_name}</b>\n"
+            f"Адреса:  <b>{data['address']}</b>\n"
+            f"Номер замовлення:  <b>{order_id}</b>\n"
+            f"Номер замовлення:  <b>{answer}</b>\n"
+            #f"Товари:  <b>{', '.join(all_products)}</b>\n"
+            #f"Сума замовлення:  <b>{products_sum}</b> ₴"
+        )
         await bot.send_message(chat_id=952618057, text=text, parse_mode="HTML")
 
         for manager_id in managers:
             try:
                 await bot.send_message(chat_id=manager_id, text=text, parse_mode="HTML")
             except:
-                pass
+                continue
 
     await state.finish()
