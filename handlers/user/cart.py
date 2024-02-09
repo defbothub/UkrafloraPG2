@@ -359,7 +359,7 @@ async def process_confirm(message: Message, state: FSMContext):
             f"Ім'я:  <b>{user_name}</b>\n"
             f"Адреса:  <b>{data['address']}</b>\n"
             f"Номер замовлення:  <b>{order_id}</b>\n"
-            f"Номер замовлення:  <b>{answer}</b>\n"
+            f"Товари:  <b>{answer}</b>\n"
             #f"Товари:  <b>{', '.join(all_products)}</b>\n"
             f"Сума замовлення:  <b>{total_price}</b> ₴"
         )
