@@ -293,9 +293,10 @@ async def payout(message, state):
 '''При потверждении заказа ввел текст вместо нажатия на кнопку'''
 
 
-@dp.message_handler(IsUser(), lambda message: message.text not in [confirm_message, back_message], state=CheckoutState.confirm)
+@dp.message_handler(IsUser(), lambda message: message.text not in [confirm_message, back_message, payment_carrier],
+                    state=CheckoutState.confirm)
 async def process_confirm_invalid(message: Message):
-    await message.reply('Такого варіанту не було.')
+    await message.reply('Такого варіанту не було...')
 
 '''При потверждении заказа нажал назад'''
 
