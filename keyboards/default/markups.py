@@ -3,6 +3,7 @@ from data.config import pay_link
 
 back_message = '👈 Назад'
 confirm_message = 'Я оплатив (ла) 👍'
+payment_carrier = "Оплата при отриманні 💸"
 all_right_message = '✅ Все вірно'
 cancel_message = '🚫 Відмінити'
 menu_message = 'Menu'
@@ -66,7 +67,7 @@ def submit_markup():
 
 def payment_markup():
     markup = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
-    payment_message = KeyboardButton(text='Сплатити 💳', web_app=WebAppInfo(url=pay_link))
-    markup.add(payment_message).add(confirm_message)
+    payment_message = KeyboardButton(text='Сплатити зараз карткою 💳', web_app=WebAppInfo(url=pay_link))
+    markup.add(payment_message).add(confirm_message).add(payment_carrier)
 
     return markup
