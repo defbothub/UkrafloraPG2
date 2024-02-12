@@ -307,12 +307,13 @@ async def process_confirm(message: Message, state: FSMContext):
 '''Потвердил заказ'''
 
 
-@dp.message_handler(IsUser(), text=confirm_message, state=CheckoutState.confirm)
+@dp.message_handler(IsUser(), lambda message: message.text in [confirm_message, payment_carrier],
+                    state=CheckoutState.confirm)
 async def process_confirm(message: Message, state: FSMContext):
-
     logger.info(
         f"User id - {message.from_user.id} name - {message.from_user.first_name} Deal was made.")
     user_name = message.from_user.first_name
+
     async with state.proxy() as data:
         cid = message.chat.id
         '''Вытаскиваем заказ меняем его статус и добовляем имя и адрес'''
@@ -330,10 +331,15 @@ async def process_confirm(message: Message, state: FSMContext):
         order_id = None
         all_products = []
         products_sum = 0
-  ###      
+        ###
         answer = ''
         total_price = 0
 
+        # клієнт обирає спосіб оплати і вибір передається адміну і менеджеру
+        if message.text == confirm_message:
+            payment_text = "оплата карткою 💳"
+        elif message.text == payment_carrier:
+            payment_text = "оплата готівкою 💸"
 
         for product, ordered_product, _ in data['products'].values():
             ordered_product = db.db_session.query(
@@ -360,8 +366,9 @@ async def process_confirm(message: Message, state: FSMContext):
             f"Адреса:  <b>{data['address']}</b>\n"
             f"Номер замовлення:  <b>{order_id}</b>\n"
             f"Товари:  <b>{answer}</b>\n"
-            #f"Товари:  <b>{', '.join(all_products)}</b>\n"
-            f"Сума замовлення:  <b>{total_price}</b> ₴"
+            # f"Товари:  <b>{', '.join(all_products)}</b>\n"
+            f"Сума замовлення:  <b>{total_price}</b> ₴\n"
+            f"Cпосіб оплати : {payment_text}"
         )
         await bot.send_message(chat_id=6128561399, text=text, parse_mode="HTML")
 
@@ -372,3 +379,4 @@ async def process_confirm(message: Message, state: FSMContext):
                 continue
 
     await state.finish()
+
