@@ -56,6 +56,12 @@ class Promotion(Base):
     photo = Column(LargeBinary, nullable=False)
     caption = Column(String, nullable=False)
 
+class User(Base):
+    __tablename__ = 'users_uf'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    active = Column(Boolean, default=True)
+
 def create_tables():
     Base.metadata.create_all(engine)
 
