@@ -14,6 +14,7 @@ import aioschedule
 import asyncio
 import datetime
 import psycopg2 as ps
+from utils.db.db_loader import DATABASE_URL
 
 
 filters.setup(dp)
