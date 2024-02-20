@@ -38,11 +38,11 @@ async def cmd_start(message: types.Message):
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
         user_id = message.from_user.id
-        cur.execute("SELECT * FROM users_uf WHERE us_id = %s;", (user_id,))
+        cur.execute("SELECT * FROM users_uf WHERE id = %s;", (user_id,))
         data = cur.fetchone()
 
         if data is None:
-            cur.execute("INSERT INTO users_uf (us_id) VALUES (%s);", (user_id,))
+            cur.execute("INSERT INTO users_uf (id) VALUES (%s);", (user_id,))
             base.commit()
             cur.close()
             await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
