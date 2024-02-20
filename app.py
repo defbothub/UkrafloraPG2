@@ -13,6 +13,7 @@ import logging
 import aioschedule
 import asyncio
 import datetime
+import psycopg2 as ps
 
 
 filters.setup(dp)
