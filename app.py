@@ -32,8 +32,34 @@ async def cmd_start(message: types.Message):
                              '\nГарного робочого дня 🤗'
                              '\nТисни Menu і почнемо...', reply_markup=menu_markup())
     else:
-        await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
+
+        base = ps.connect(DATABASE_URL, sslmode='require')
+        cur = base.cursor()
+        user_id = message.from_user.id
+        cur.execute("SELECT * FROM users_uf WHERE us_id = %s;", (user_id,))
+        data = cur.fetchone()
+
+        if data is None:
+            cur.execute("INSERT INTO users_uf (us_id) VALUES (%s);", (user_id,))
+            base.commit()
+            cur.close()
+            await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
                              reply_markup=menu_markup())
+        else:
+            await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
+                             reply_markup=menu_markup())
+
+
+@dp.message_handler(commands='select')
+async def count_users(message: types.Message):
+    if message.chat.type == 'private':
+        base = ps.connect(DATABASE_URL, sslmode='require')
+        cur = base.cursor()
+        cur.execute("SELECT COUNT(*) as users_amount FROM users_uf ")
+        data = cur.fetchone()[0]
+        cur.close()
+        base.close()
+        await message.answer(f"Украфлора має {data} користувачів 👫")
 
 def chek_and_delete_orders():
     day_of_month = datetime.now().day
