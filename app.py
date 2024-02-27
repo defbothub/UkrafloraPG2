@@ -64,28 +64,31 @@ async def count_users(message: types.Message):
 
 @dp.message_handler(commands='sendall')
 async def sendall(message: types.Message):
-    text = message.text[9:]
-    try:
-        with db.connect() as connection:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT id, active FROM users_uf")
-                users = cursor.fetchall()
-                for row in users:
-                    try:
-                        await bot.send_message(row[0], text)
-                        if row[1] != 1:
-                            user_id = row[0]
-                            cursor.execute("UPDATE users_uf SET active = 1 WHERE id = %s", (user_id,))
-                            connection.commit()
-                    except Exception as e:
-                        print(f"Error sending message to user {row[0]}: {e}")
+    if message.chat.type == 'private':
+        text = message.text[9:]
+        try:
+            base = ps.connect(DATABASE_URL, sslmode='require')
+            cur = base.cursor()
+            cur.execute("SELECT id, active FROM users_uf")
+            users = cur.fetchall()
+            for row in users:
+                try:
+                    await bot.send_message(row[0], text)
+                    if row[1] != 1:
                         user_id = row[0]
-                        cursor.execute("UPDATE users_uf SET active = 0 WHERE id = %s", (user_id,))
-                        connection.commit()
+                        cur.execute("UPDATE users_uf SET active = 1 WHERE id = %s", (user_id,))
+                        cur.close()
+                        base.close()
+                except Exception as e:
+                    print(f"Error sending message to user {row[0]}: {e}")
+                    user_id = row[0]
+                    cur.execute("UPDATE users_uf SET active = 0 WHERE id = %s", (user_id,))
+                    cur.close()
+                    base.close()
 
-        await message.reply("Повідомлення розіслано!")
-    except Exception as e:
-        print(f"Error: {e}")
+            await message.reply("Повідомлення розіслано!")
+        except Exception as e:
+            print(f"Error: {e}")
 
 
 def chek_and_delete_orders():
