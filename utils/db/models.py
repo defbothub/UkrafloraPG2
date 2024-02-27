@@ -60,7 +60,7 @@ class User(Base):
     __tablename__ = 'users_uf'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    active = Column(Boolean, default=True)
+    active = Column(Integer, default=1)
 
 def create_tables():
     Base.metadata.create_all(engine)
