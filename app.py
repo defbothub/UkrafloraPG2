@@ -32,16 +32,16 @@ async def cmd_start(message: types.Message):
         await message.answer('Вітаю тебе Адміне!'
                              '\nГарного робочого дня 🤗'
                              '\nТисни Menu і почнемо...', reply_markup=menu_markup())
-    else:
+     else:
 
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
         user_id = message.from_user.id
-        cur.execute("SELECT * FROM users_uf WHERE id = %s;", (user_id,))
+        cur.execute("SELECT * FROM users_ukrflr WHERE id = %s;", (user_id,))
         data = cur.fetchone()
 
         if data is None:
-            cur.execute("INSERT INTO users_uf (id) VALUES (%s);", (user_id,))
+            cur.execute("INSERT INTO users_ukrflr (id) VALUES (%s);", (user_id,))
             base.commit()
             cur.close()
             await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
@@ -56,40 +56,41 @@ async def count_users(message: types.Message):
     if message.chat.type == 'private':
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
-        cur.execute("SELECT COUNT(*) as users_amount FROM users_uf ")
+        cur.execute("SELECT COUNT(*) as users_amount FROM users_ukrflr ")
         data = cur.fetchone()[0]
         cur.close()
         base.close()
         await message.answer(f"Украфлора має {data} користувачів 👫")
 
+
+# розсилка повідомлень
 @dp.message_handler(commands='sendall')
 async def sendall(message: types.Message):
     if message.chat.type == 'private':
+        text = message.text[9:]
         try:
             base = ps.connect(DATABASE_URL, sslmode='require')
             cur = base.cursor()
-            text = message.text[9:]
-            cur.execute("SELECT id, active FROM users_uf")
+            cur.execute("SELECT id, active FROM users_ukrflr")
             users = cur.fetchall()
             for row in users:
                 try:
                     await bot.send_message(row[0], text)
-                    if int(row[1]) != 1:
+                    if row[1] != 1:
                         user_id = row[0]
-                        active = 1
-                        cur.execute("UPDATE users_uf SET active = %s WHERE id = %s;", (active, user_id))
+                        cur.execute("UPDATE users_ukrflr SET active = 1 WHERE id = %s", (user_id,))
+                        cur.close()
+                        base.close()
                 except Exception as e:
-                    print(f"Помилка відправки повідомлення користувачу {row[0]}: {e}")
+                    print(f"Error sending message to user {row[0]}: {e}")
                     user_id = row[0]
-                    active = 0
-                    cur.execute("UPDATE users_uf SET active = %s WHERE id = %s;", (active, user_id))
-            base.commit()
+                    cur.execute("UPDATE users_ukrflr SET active = 0 WHERE id = %s", (user_id,))
+                    cur.close()
+                    base.close()
+
+            await message.reply("Повідомлення розіслано!")
         except Exception as e:
-            print(f"Помилка з'єднання з базою даних: {e}")
-        finally:
-            cur.close()
-            base.close()
-        await bot.send_message(message.from_user.id, "Повідомлення розіслано!")
+            print(f"Error: {e}")
 
 
 def chek_and_delete_orders():
