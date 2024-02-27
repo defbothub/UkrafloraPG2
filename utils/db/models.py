@@ -57,7 +57,7 @@ class Promotion(Base):
     caption = Column(String, nullable=False)
 
 class User(Base):
-    __tablename__ = 'users_uf'
+    __tablename__ = 'users_ukrflr'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     active = Column(Integer, default=1)
