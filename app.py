@@ -6,8 +6,7 @@ from keyboards import *
 from aiogram import executor, types
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from data import config
-from loader import dp, db
-#, bot, base, cur
+from loader import dp, db, bot
 import filters
 import logging
 import aioschedule
@@ -62,6 +61,32 @@ async def count_users(message: types.Message):
         cur.close()
         base.close()
         await message.answer(f"Украфлора має {data} користувачів 👫")
+
+@dp.message_handler(commands='sendall')
+async def sendall(message: types.Message):
+    text = message.text[9:]
+    try:
+        with db.connect() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT id, active FROM users_uf")
+                users = cursor.fetchall()
+                for row in users:
+                    try:
+                        await bot.send_message(row[0], text)
+                        if row[1] != 1:
+                            user_id = row[0]
+                            cursor.execute("UPDATE users_uf SET active = 1 WHERE id = %s", (user_id,))
+                            connection.commit()
+                    except Exception as e:
+                        print(f"Error sending message to user {row[0]}: {e}")
+                        user_id = row[0]
+                        cursor.execute("UPDATE users_uf SET active = 0 WHERE id = %s", (user_id,))
+                        connection.commit()
+
+        await message.reply("Повідомлення розіслано!")
+    except Exception as e:
+        print(f"Error: {e}")
+
 
 def chek_and_delete_orders():
     day_of_month = datetime.now().day
