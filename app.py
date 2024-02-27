@@ -65,30 +65,31 @@ async def count_users(message: types.Message):
 @dp.message_handler(commands='sendall')
 async def sendall(message: types.Message):
     if message.chat.type == 'private':
-        text = message.text[9:]
         try:
             base = ps.connect(DATABASE_URL, sslmode='require')
             cur = base.cursor()
+            text = message.text[9:]
             cur.execute("SELECT id, active FROM users_uf")
             users = cur.fetchall()
             for row in users:
                 try:
                     await bot.send_message(row[0], text)
-                    if row[1] != 1:
+                    if int(row[1]) != 1:
                         user_id = row[0]
-                        cur.execute("UPDATE users_uf SET active = 1 WHERE id = %s", (user_id,))
-                        cur.close()
-                        base.close()
+                        active = 1
+                        cur.execute("UPDATE users_uf SET active = %s WHERE id = %s;", (active, user_id))
                 except Exception as e:
-                    print(f"Error sending message to user {row[0]}: {e}")
+                    print(f"Помилка відправки повідомлення користувачу {row[0]}: {e}")
                     user_id = row[0]
-                    cur.execute("UPDATE users_uf SET active = 0 WHERE id = %s", (user_id,))
-                    cur.close()
-                    base.close()
-
-            await message.reply("Повідомлення розіслано!")
+                    active = 0
+                    cur.execute("UPDATE users_uf SET active = %s WHERE id = %s;", (active, user_id))
+            base.commit()
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Помилка з'єднання з базою даних: {e}")
+        finally:
+            cur.close()
+            base.close()
+        await bot.send_message(message.from_user.id, "Повідомлення розіслано!")
 
 
 def chek_and_delete_orders():
