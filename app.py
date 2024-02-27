@@ -6,7 +6,7 @@ from keyboards import *
 from aiogram import executor, types
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from data import config
-from loader import dp, db, bot
+from loader import dp, db
 import filters
 import logging
 import aioschedule
