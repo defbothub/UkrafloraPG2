@@ -37,11 +37,11 @@ async def cmd_start(message: types.Message):
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
         user_id = message.from_user.id
-        cur.execute("SELECT * FROM users_ukrflr WHERE id = %s;", (user_id,))
+        cur.execute("SELECT * FROM users_uf WHERE id = %s;", (user_id,))
         data = cur.fetchone()
 
         if data is None:
-            cur.execute("INSERT INTO users_ukrflr (id) VALUES (%s);", (user_id,))
+            cur.execute("INSERT INTO users_uf (id) VALUES (%s);", (user_id,))
             base.commit()
             cur.close()
             await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
@@ -56,7 +56,7 @@ async def count_users(message: types.Message):
     if message.chat.type == 'private':
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
-        cur.execute("SELECT COUNT(*) as users_amount FROM users_ukrflr ")
+        cur.execute("SELECT COUNT(*) as users_amount FROM users_uf ")
         data = cur.fetchone()[0]
         cur.close()
         base.close()
@@ -71,20 +71,20 @@ async def sendall(message: types.Message):
         try:
             base = ps.connect(DATABASE_URL, sslmode='require')
             cur = base.cursor()
-            cur.execute("SELECT id, active FROM users_ukrflr")
+            cur.execute("SELECT id, active FROM users_uf")
             users = cur.fetchall()
             for row in users:
                 try:
                     await bot.send_message(row[0], text)
                     if row[1] != 1:
                         user_id = row[0]
-                        cur.execute("UPDATE users_ukrflr SET active = 1 WHERE id = %s", (user_id,))
+                        cur.execute("UPDATE users_uf SET active = 1 WHERE id = %s", (user_id,))
                         cur.close()
                         base.close()
                 except Exception as e:
                     print(f"Error sending message to user {row[0]}: {e}")
                     user_id = row[0]
-                    cur.execute("UPDATE users_ukrflr SET active = 0 WHERE id = %s", (user_id,))
+                    cur.execute("UPDATE users_uf SET active = 0 WHERE id = %s", (user_id,))
                     cur.close()
                     base.close()
 
