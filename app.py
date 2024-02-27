@@ -4,16 +4,15 @@ import os
 import handlers
 from keyboards import *
 from aiogram import executor, types
-from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from data import config
-from loader import dp, db
+from utils.db.db_loader import DATABASE_URL    #додав для статистики
+import psycopg2 as ps                          # додав для статистики
+from loader import dp, db, bot
 import filters
 import logging
 import aioschedule
 import asyncio
 import datetime
-import psycopg2 as ps
-from utils.db.db_loader import DATABASE_URL
 
 
 filters.setup(dp)
@@ -32,7 +31,7 @@ async def cmd_start(message: types.Message):
         await message.answer('Вітаю тебе Адміне!'
                              '\nГарного робочого дня 🤗'
                              '\nТисни Menu і почнемо...', reply_markup=menu_markup())
-     else:
+    else:
 
         base = ps.connect(DATABASE_URL, sslmode='require')
         cur = base.cursor()
@@ -63,7 +62,6 @@ async def count_users(message: types.Message):
         await message.answer(f"Украфлора має {data} користувачів 👫")
 
 
-# розсилка повідомлень
 
 
 def chek_and_delete_orders():
