@@ -57,10 +57,10 @@ class Promotion(Base):
     caption = Column(String, nullable=False)
 
 class User(Base):
-    __tablename__ = 'users_uf'
+    __tablename__ = 'users_ukrflr'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    active = Column(Boolean, default=True)
+    active = Column(Integer, nullable=False, default=1)
 
 def create_tables():
     Base.metadata.create_all(engine)
