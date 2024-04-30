@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, LargeBinary, ForeignKey, Boolean
+from sqlalchemy import Column, String, Integer, LargeBinary, ForeignKey, Boolean, BigInteger
 from sqlalchemy.orm import relationship
 from .db_loader import Base, engine
 
@@ -59,7 +59,7 @@ class Promotion(Base):
 class User(Base):
     __tablename__ = 'users_ukrflr'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
     active = Column(Integer, nullable=False, default=1)
 
 def create_tables():
