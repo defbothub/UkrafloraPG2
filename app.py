@@ -23,14 +23,13 @@ admin_message = 'Адміністратор'
 
 @dp.message_handler(commands='start')
 async def cmd_start(message: types.Message):
-    #markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    #markup.row(user_message, admin_message)
-    cid = message.chat.id
-    if cid in config.ADMINS:
-        config.ADMINS.append(cid)
+    if message.from_user.id in config.ADMINS:
+
+        #config.ADMINS.append(cid)
         await message.answer('Вітаю тебе Адміне!'
                              '\nГарного робочого дня 🤗'
                              '\nТисни Menu і почнемо...', reply_markup=menu_markup())
+        return
     else:
 
         base = ps.connect(DATABASE_URL, sslmode='require')
@@ -38,15 +37,22 @@ async def cmd_start(message: types.Message):
         user_id = message.from_user.id
         cur.execute("SELECT * FROM users_ukrflr WHERE id = %s;", (user_id,))
         data = cur.fetchone()
+        print(data)
 
         if data is None:
-            cur.execute("INSERT INTO users_ukrflr (id) VALUES (%s);", (user_id,))
-            base.commit()
-            cur.close()
-            await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
-                             reply_markup=menu_markup())
+            try:
+                print("ok")
+                cur.execute("INSERT INTO users_ukrflr (id, active) VALUES (%s, %s);", (user_id, 1))
+                print("ok1")
+                base.commit()
+                cur.close()
+                await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
+                                     reply_markup=menu_markup())
+            except Exception as e:
+                print("Помилка при виконанні SQL-запиту:", e)
+
         else:
-            await message.answer('''Натисніть Menu, щоб продовжити.   👇''',
+            await message.answer('''Натисніть Menu, щоб продовжити   👇''',
                              reply_markup=menu_markup())
 
 
